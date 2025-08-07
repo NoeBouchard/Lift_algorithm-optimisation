@@ -41,7 +41,13 @@ class Request:
     
     # saves time from lift arrival to request completion (time spent in the lift)
     def floor_check_in(self, time: float):
-        self.time_in_lift = time - self.time_on_floor
+        # ``time_on_floor`` stores the waiting time from request creation until
+        # the lift arrives.  To get the duration spent inside the lift we need
+        # to subtract both the waiting time and the creation time from the
+        # completion timestamp.  Previously the creation time was ignored,
+        # leading to inflated in-lift times when the simulation start time was
+        # not zero.
+        self.time_in_lift = time - self.time_created - self.time_on_floor
         return True
     
     # creates a list of all floor numbers between two specified floors based on the direction of the lift
